@@ -93,20 +93,25 @@ class OutputJsonResponse
                 $this->json()->merge($content);
             }
 
-            $headers = $_response->headers->all();
-
             if ($_response->headers->has(self::AUTH_HEADER) &&
                 ($headerToken = $_response->headers->get(self::AUTH_HEADER))) {
                 $headers[self::AUTH_HEADER] = $headerToken;
             }
         }
 
+        if ($this->hasToken()) {
+            $headers[self::AUTH_HEADER] = 'Bearer ' . $this->json()->getToken();
+        }
+
+        // by default we want to set the status code to 400 if there are errors.
+        // And only if it has not been specified before.
+
+        if ($this->hasErrors() && $this->getStatusCode() == 200) {
+            $this->json()->setStatusCode(Response::HTTP_BAD_REQUEST);
+        }
+
         $response = response()
             ->json($this->responseArray(), $this->getStatusCode(), $headers);
-
-        if ($this->hasToken()) {
-            $response->header(self::AUTH_HEADER, 'Bearer ' . $this->json()->getToken());
-        }
 
         return $response;
     }

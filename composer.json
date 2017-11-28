@@ -1,0 +1,30 @@
+{
+    "name": "kevupton/laravel-json-response",
+    "description": "Easy Json responses for laravel",
+    "keywords": ["laravel", "eloquent", "json"],
+    "type": "Extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kevin Upton",
+            "email": "uptonkg@gmail.com"
+        }
+    ],
+    "require": {
+      "php": ">=5.3"
+    },
+    "require-dev": {
+        "laravel/lumen-framework": "5.5.*",
+        "laravel/laravel": "5.5.*",
+        "barryvdh/laravel-ide-helper": "^2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kevupton\\LaravelJsonResponse\\": "src/Kevupton/LaravelJsonResponse/"
+        },
+        "files": [
+            "src/Kevupton/LaravelJsonResponse/Helpers/helpers.php"
+        ]
+    },
+    "minimum-stability": "stable"
+}

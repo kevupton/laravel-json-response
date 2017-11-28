@@ -8,6 +8,7 @@
  */
 namespace Kevupton\LaravelJsonResponse\Exceptions;
 
+use Illuminate\Http\Response;
 use Throwable;
 
 class JsonResponseErrorException extends \Exception
@@ -22,7 +23,7 @@ class JsonResponseErrorException extends \Exception
      */
     private $value;
 
-    public function __construct ($key = null, $value = null, $statusCode = 500, Throwable $previous = null)
+    public function __construct ($key = null, $value = null, $statusCode = Response::HTTP_BAD_REQUEST, Throwable $previous = null)
     {
         parent::__construct("Error Data:\n" . print_r($key, true), $statusCode, $previous);
         $this->key = $key;

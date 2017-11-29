@@ -51,7 +51,7 @@ class OutputJsonResponse
     private function passException (\Exception $e)
     {
         $reflect = new ReflectionClass($e);
-        $method = camel_case('handle' . $reflect->getShortName());
+        $method = camel_case('handle_' . $reflect->getShortName());
 
         if (method_exists($this, $method)) {
             return $this->$method($e);

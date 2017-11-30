@@ -77,7 +77,8 @@ You can also set data and tokens directly from this method.
 Usage:
 ```php
 Route::get('test', function () {
-    json_response()->error('This an example error message')->setStatusCode(\Illuminate\Http\Response::HTTP_BAD_REQUEST);
+    json_response()->error('This an example error message')
+        ->setStatusCode(\Illuminate\Http\Response::HTTP_BAD_REQUEST);
 });
 ```
 

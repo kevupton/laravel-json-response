@@ -40,7 +40,7 @@ class ExceptionHandler
      * @param \Exception $exception
      * @param OutputJsonResponse $middleware
      */
-    public function __construct (\Exception $exception, OutputJsonResponse $middleware)
+    public function __construct (\Exception $exception = null, OutputJsonResponse $middleware)
     {
         $this->exception = $exception;
         $this->middleware = $middleware;

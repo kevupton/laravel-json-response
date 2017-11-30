@@ -82,7 +82,7 @@ class OutputJsonResponse
                 // for each different type of content, we will do a different thing.
                 // for models we want to add it to the snake_case model name on the data object
                 if ($content instanceof Model) {
-                    $this->json()->set(last(explode("\\", get_class($content))), $content);
+                    $this->json()->set(snake_case(last(explode("\\", get_class($content)))), $content);
                 } elseif ($content instanceof Arrayable) {
                     $this->json()->merge($content->toArray());
                 } elseif (is_array($content)) {

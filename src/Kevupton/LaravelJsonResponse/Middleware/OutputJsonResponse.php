@@ -9,6 +9,8 @@
 namespace Kevupton\LaravelJsonResponse\Middleware;
 
 use Closure;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Kevupton\LaravelJsonResponse\Exceptions\JsonResponseErrorException;
@@ -55,26 +57,13 @@ class OutputJsonResponse
 
         if (method_exists($this, $method)) {
             return $this->$method($e);
-        }
-        else if (method_exists($this, 'handleException')) {
-            return $this->handleException($e);
+        } else {
+            if (method_exists($this, 'handleException')) {
+                return $this->handleException($e);
+            }
         }
 
         return true;
-    }
-
-    /**
-     * Handles the json response error
-     *
-     * @param JsonResponseErrorException $e
-     * @return bool
-     */
-    protected function handleJsonResponseErrorException (JsonResponseErrorException $e) {
-        $this->json()
-            ->error($e->getKey(), $e->getValue())
-            ->setStatusCode($e->getCode());
-
-        return false;
     }
 
     /**
@@ -90,7 +79,17 @@ class OutputJsonResponse
 
         if ($_response && !$_response->exception) {
             if ($content = $_response->getOriginalContent()) {
-                $this->json()->merge($content);
+                // for each different type of content, we will do a different thing.
+                // for models we want to add it to the snake_case model name on the data object
+                if ($content instanceof Model) {
+                    $this->json()->set(last(explode("\\", get_class($content))), $content);
+                } elseif ($content instanceof Arrayable) {
+                    $this->json()->merge($content->toArray());
+                } elseif (is_array($content)) {
+                    $this->json()->merge($content);
+                } else {
+                    $this->json()->add($content);
+                }
             }
 
             if ($_response->headers->has(self::AUTH_HEADER) &&
@@ -114,5 +113,20 @@ class OutputJsonResponse
             ->json($this->responseArray(), $this->getStatusCode(), $headers);
 
         return $response;
+    }
+
+    /**
+     * Handles the json response error
+     *
+     * @param JsonResponseErrorException $e
+     * @return bool
+     */
+    protected function handleJsonResponseErrorException (JsonResponseErrorException $e)
+    {
+        $this->json()
+            ->error($e->getKey(), $e->getValue())
+            ->setStatusCode($e->getCode());
+
+        return false;
     }
 }

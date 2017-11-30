@@ -128,6 +128,19 @@ class JsonResponse
     }
 
     /**
+     * Appends an item to the list of data
+     *
+     * @param mixed $value
+     * @return $this
+     */
+    public function add ($value)
+    {
+        $this->data[] = $value;
+
+        return $this;
+    }
+
+    /**
      * Merges an array of data with the response data.
      *
      * @param array $data

@@ -30,14 +30,10 @@ Add the middleware to your `app\Http\Kernel.php`
 Either:
 
 ```php
-// Formats all responses in json. Only catchs JsonResponseErrorException
+// Formats all responses in json. Catches errors listed in config and JsonResponseErrorExceptions
 Kevupton\LaravelJsonResponse\Middleware\OutputJsonResponse, 
 
-// All of above, and catches validation exceptions
-Kevupton\LaravelJsonResponse\Middleware\CatchValidationExceptions, 
-
-
-// All of above and catches all exceptions.
+// Extends the OutputJsonResponse to catch all errors, to keep the JSON output
 Kevupton\LaravelJsonResponse\Middleware\CatchAllExceptions, 
 ```
 

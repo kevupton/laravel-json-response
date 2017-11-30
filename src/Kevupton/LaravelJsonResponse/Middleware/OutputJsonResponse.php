@@ -13,9 +13,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Kevupton\LaravelJsonResponse\Exceptions\ExceptionHandler;
 use Kevupton\LaravelJsonResponse\Exceptions\JsonResponseErrorException;
 use Kevupton\LaravelJsonResponse\Traits\HasJson;
-use ReflectionClass;
 
 class OutputJsonResponse
 {
@@ -37,33 +37,11 @@ class OutputJsonResponse
     {
         $this->_response = $next($request);
 
-        if ($this->_response->exception && $this->passException($this->_response->exception)) {
+        if ((new ExceptionHandler($this->_response->exception, $this))->failed()) {
             return $this->_response;
         }
 
         return $this->makeJsonResponse();
-    }
-
-    /**
-     * Sends the exception to the appropriate method.
-     *
-     * @param \Exception $e
-     * @return bool
-     */
-    private function passException (\Exception $e)
-    {
-        $reflect = new ReflectionClass($e);
-        $method = camel_case('handle_' . $reflect->getShortName());
-
-        if (method_exists($this, $method)) {
-            return $this->$method($e);
-        } else {
-            if (method_exists($this, 'handleException')) {
-                return $this->handleException($e);
-            }
-        }
-
-        return true;
     }
 
     /**

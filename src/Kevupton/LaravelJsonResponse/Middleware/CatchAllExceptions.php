@@ -4,7 +4,7 @@ namespace Kevupton\LaravelJsonResponse\Middleware;
 
 use Illuminate\Http\Response;
 
-class CatchAllExceptions extends CatchValidationExceptions
+class CatchAllExceptions extends OutputJsonResponse
 {
     /**
      * @param \Exception $e
@@ -20,7 +20,5 @@ class CatchAllExceptions extends CatchValidationExceptions
         }
 
         $json->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        return false;
     }
 }

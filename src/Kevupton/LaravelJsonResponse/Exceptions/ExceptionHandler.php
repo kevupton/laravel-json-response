@@ -88,9 +88,11 @@ class ExceptionHandler
 
                     $this->json()->error(...$case);
 
-                } elseif (is_callable($case) && $case($this->exception, $this->json())) {
+                } elseif (is_callable($case)) {
 
-                    $result = true;
+                    if ($case($this->exception, $this->json())) {
+                        $result = true;
+                    }
 
                 } else {
 

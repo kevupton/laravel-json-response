@@ -67,14 +67,13 @@ class ExceptionHandler
             $ran = false;
             $result = false;
 
-            foreach ($exceptions as $exception) {
+            foreach ($exceptions as $exception => $case) {
 
                 if (!is_a($this->exception, $exception)) {
                     continue;
                 }
 
                 $ran = true;
-                $case = $exceptions[$exception];
 
                 if (is_array($case) && isset($case['error'])) {
 

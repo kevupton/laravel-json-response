@@ -40,7 +40,7 @@ class ExceptionHandler
      * @param \Exception $exception
      * @param OutputJsonResponse $middleware
      */
-    public function __construct (\Exception $exception = null, OutputJsonResponse $middleware)
+    public function __construct(\Exception $exception = null, OutputJsonResponse $middleware)
     {
         $this->exception = $exception;
         $this->middleware = $middleware;
@@ -54,41 +54,59 @@ class ExceptionHandler
     /**
      * Handles the exception returning whether or not the handler failed.
      */
-    protected function handle ()
+    protected function handle()
     {
         $method = camel_case('handle_' . $this->getExceptionShortName());
         $exceptions = config(LARAVEL_JSON_RESPONSE_CONFIG . '.exceptions');
-        $class = $this->getExceptionClass();
 
         if (method_exists($this->middleware, $method)) {
 
             return $this->middleware->$method($this->exception);
 
-        } elseif (array_key_exists($class, $exceptions)) {
+        } else {
+            $ran = false;
+            $result = false;
 
-            $case = $exceptions[$class];
+            foreach ($exceptions as $exception) {
 
-            if (is_array($case) && isset($case['error'])) {
-                foreach ($case as $key => $value) {
-                    if (!is_callable([$this->json(), $key])) {
-                        continue;
-                    }
-                    call_user_func_array([$this->json(), $key], is_array($value) ? $value : [$value]);
+                if (!is_a($this->exception, $exception)) {
+                    continue;
                 }
-            } elseif (is_array($case)) {
-                $this->json()->error(...$case);
-            } elseif (is_callable($case)) {
-                return $case($this->exception, $this->json());
-            } else {
-                $this->json()->error($case);
+
+                $ran = true;
+                $case = $exceptions[$exception];
+
+                if (is_array($case) && isset($case['error'])) {
+
+                    foreach ($case as $key => $value) {
+                        if (!is_callable([$this->json(), $key])) {
+                            continue;
+                        }
+                        call_user_func_array([$this->json(), $key], is_array($value) ? $value : [$value]);
+                    }
+
+                } elseif (is_array($case)) {
+
+                    $this->json()->error(...$case);
+
+                } elseif (is_callable($case) && $case($this->exception, $this->json())) {
+
+                    $result = true;
+
+                } else {
+
+                    $this->json()->error($case);
+
+                }
+
             }
 
-            return false;
+            if ($ran) return $result;
 
-        } elseif (method_exists($this->middleware, 'handleException')) {
+        }
 
+        if (method_exists($this->middleware, 'handleException')) {
             return $this->middleware->handleException($this->exception);
-
         }
 
         return true;
@@ -99,7 +117,7 @@ class ExceptionHandler
      *
      * @return string
      */
-    public function getExceptionShortName ()
+    public function getExceptionShortName()
     {
         return (new ReflectionClass($this->exception))->getShortName();
     }
@@ -109,7 +127,7 @@ class ExceptionHandler
      *
      * @return string
      */
-    public function getExceptionClass ()
+    public function getExceptionClass()
     {
         return get_class($this->exception);
     }
@@ -119,7 +137,7 @@ class ExceptionHandler
      *
      * @return bool
      */
-    public function failed ()
+    public function failed()
     {
         return $this->failed;
     }

@@ -69,14 +69,13 @@ class OutputJsonResponse
                     $this->json()->add($content);
                 }
             }
-
-            if ($_response->headers->has(self::AUTH_HEADER) &&
-                ($headerToken = $_response->headers->get(self::AUTH_HEADER))) {
-                $headers[self::AUTH_HEADER] = $headerToken;
-            }
         }
 
-        if ($this->hasToken()) {
+        if ($_response->headers->has(self::AUTH_HEADER) &&
+            ($headerToken = $_response->headers->get(self::AUTH_HEADER))) {
+            $headers[self::AUTH_HEADER] = $headerToken;
+        }
+        elseif ($this->hasToken()) {
             $headers[self::AUTH_HEADER] = 'Bearer ' . $this->json()->getToken();
         }
 

@@ -74,9 +74,11 @@ class OutputJsonResponse
         if ($_response->headers->has(self::AUTH_HEADER) &&
             ($headerToken = $_response->headers->get(self::AUTH_HEADER))) {
             $headers[self::AUTH_HEADER] = $headerToken;
+            $this->json()->setToken(null);
         }
         elseif ($this->hasToken()) {
             $headers[self::AUTH_HEADER] = 'Bearer ' . $this->json()->getToken();
+            $this->json()->setToken(null);
         }
 
         // by default we want to set the status code to 400 if there are errors.
@@ -98,7 +100,7 @@ class OutputJsonResponse
      * @param JsonResponseErrorException $e
      * @return bool
      */
-    protected function handleJsonResponseErrorException (JsonResponseErrorException $e)
+    public function handleJsonResponseErrorException (JsonResponseErrorException $e)
     {
         $this->json()
             ->error($e->getKey(), $e->getValue())

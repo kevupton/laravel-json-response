@@ -16,7 +16,7 @@ class CatchAllExceptions extends OutputJsonResponse
             ->error($e->getMessage());
 
         if (env('APP_DEBUG')) {
-            $json->addErrors($e->getTrace());
+            $json->error($e->getTraceAsString());
         }
 
         $json->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);

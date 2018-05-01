@@ -69,6 +69,10 @@ class OutputJsonResponse
                     $this->json()->add($content);
                 }
             }
+
+            if ($_response->getStatusCode() !== 200) {
+                $this->json()->setStatusCode($_response->getStatusCode());
+            }
         }
 
         if ($_response->headers->has(self::AUTH_HEADER) &&

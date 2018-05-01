@@ -13,10 +13,11 @@ class CatchAllExceptions extends OutputJsonResponse
     public function handleException (\Exception $e)
     {
         $json = $this->json()
+            ->error(get_class($e))
             ->error($e->getMessage());
 
         if (env('APP_DEBUG')) {
-            $json->error($e->getTraceAsString());
+            $json->mergeErrors(explode("\n", $e->getTraceAsString()));
         }
 
         $json->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);

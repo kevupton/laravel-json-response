@@ -224,7 +224,7 @@ class JsonResponse
      */
     public function isSuccess ()
     {
-        return count($this->errors) == 0 && $this->statusCode == 200;
+        return count($this->errors) == 0 && $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
     /**
